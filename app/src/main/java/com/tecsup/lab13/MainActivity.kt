@@ -29,26 +29,44 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting() // Llamamos a nuestro Composable
+                    VisibilityDemo() // Llamamos a nuestro Composable
                 }
             }
         }
     }
 }
 
-
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun VisibilityDemo() {
+    var visible by remember { mutableStateOf(false) }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Lab13Theme {
-        Greeting("Android")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(
+            onClick = { visible = !visible }
+        ) {
+            Text(text = if (visible) "Ocultar cuadro" else "Mostrar cuadro")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(),   // Efecto de desvanecerse al aparecer
+            exit = fadeOut()    // Efecto de desvanecerse al desaparecer
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(150.dp)
+                    .background(Color(0xFF00BCD4)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "¡Hola!", color = Color.White)
+            }
+        }
     }
 }
