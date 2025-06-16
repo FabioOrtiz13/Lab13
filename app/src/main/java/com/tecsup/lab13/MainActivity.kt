@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -24,12 +26,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Lab13Theme {
-                // Paso 1: Pantalla principal con Surface
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    VisibilityDemo() // Llamamos a nuestro Composable
+                    VisibilityColorDemo()
                 }
             }
         }
@@ -37,8 +38,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun VisibilityDemo() {
+fun VisibilityColorDemo() {
     var visible by remember { mutableStateOf(false) }
+    var isBlue by remember { mutableStateOf(true) }
+
+    val animatedColor by animateColorAsState(
+        targetValue = if (isBlue) Color(0xFF2196F3) else Color(0xFF4CAF50),
+        animationSpec = tween(durationMillis = 600)
+    )
 
     Column(
         modifier = Modifier
@@ -47,25 +54,29 @@ fun VisibilityDemo() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Button(
-            onClick = { visible = !visible }
-        ) {
+        Button(onClick = { visible = !visible }) {
             Text(text = if (visible) "Ocultar cuadro" else "Mostrar cuadro")
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { isBlue = !isBlue }) {
+            Text(text = if (isBlue) "Cambiar a verde" else "Cambiar a azul")
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(),   // Efecto de desvanecerse al aparecer
-            exit = fadeOut()    // Efecto de desvanecerse al desaparecer
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
             Box(
                 modifier = Modifier
                     .size(150.dp)
-                    .background(Color(0xFF00BCD4)),
+                    .background(animatedColor),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "¡Hola!", color = Color.White)
+                Text(text = "Labo 13", color = Color.White)
             }
         }
     }

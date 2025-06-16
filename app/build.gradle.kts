@@ -40,6 +40,10 @@ android {
 }
 
 dependencies {
+    implementation("androidx.activity:activity-ktx:1.7.2")
+    implementation("androidx.compose.animation:animation:1.4.3")
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
