@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    VisibilityColorDemo()
+                    VisibilityColorSizeDemo() // Demo combinado
                 }
             }
         }
@@ -38,12 +39,29 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun VisibilityColorDemo() {
+fun VisibilityColorSizeDemo() {
+    // Estados para visibilidad, color, tamaño y posición
     var visible by remember { mutableStateOf(false) }
     var isBlue by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
+    var moved by remember { mutableStateOf(false) }
 
+    // Animación de color
     val animatedColor by animateColorAsState(
         targetValue = if (isBlue) Color(0xFF2196F3) else Color(0xFF4CAF50),
+        animationSpec = tween(durationMillis = 600)
+    )
+    // Animaciones de tamaño y offset
+    val size by animateDpAsState(
+        targetValue = if (expanded) 200.dp else 150.dp,
+        animationSpec = tween(durationMillis = 600)
+    )
+    val offsetX by animateDpAsState(
+        targetValue = if (moved) 100.dp else 0.dp,
+        animationSpec = tween(durationMillis = 600)
+    )
+    val offsetY by animateDpAsState(
+        targetValue = if (moved) 50.dp else 0.dp,
         animationSpec = tween(durationMillis = 600)
     )
 
@@ -54,17 +72,29 @@ fun VisibilityColorDemo() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Button(onClick = { visible = !visible }) {
-            Text(text = if (visible) "Ocultar cuadro" else "Mostrar cuadro")
+        // Controles
+        Row {
+            Button(onClick = { visible = !visible }) {
+                Text(text = if (visible) "Ocultar cuadro" else "Mostrar cuadro")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = { isBlue = !isBlue }) {
+                Text(text = if (isBlue) "Ver verde" else "Ver azul")
+            }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { isBlue = !isBlue }) {
-            Text(text = if (isBlue) "Cambiar a verde" else "Cambiar a azul")
+        Row {
+            Button(onClick = { expanded = !expanded }) {
+                Text(text = if (expanded) "Encoger" else "Expandir")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = { moved = !moved }) {
+                Text(text = if (moved) "Volver" else "Mover")
+            }
         }
-
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Elemento combinado con visibilidad, color, tamaño y posición
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(),
@@ -72,7 +102,8 @@ fun VisibilityColorDemo() {
         ) {
             Box(
                 modifier = Modifier
-                    .size(150.dp)
+                    .offset(x = offsetX, y = offsetY)
+                    .size(size)
                     .background(animatedColor),
                 contentAlignment = Alignment.Center
             ) {
